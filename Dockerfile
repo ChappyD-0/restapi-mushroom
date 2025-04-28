@@ -1,14 +1,22 @@
-FROM debian:bullseye
-RUN apt-get update
+# Usa la imagen oficial de Node 20
+FROM node:20
 
-RUN apt-get install -y curl make g++
+# Directorio de trabajo
+WORKDIR /app
 
-RUN curl -sL https://deb.nodesource.com/setup_20.x | bash -
-RUN apt-get install -y nodejs
-
-ADD . /
+# Copia sólo los ficheros de dependencias e instala
+COPY package*.json ./
 RUN npm install
 
-EXPOSE 8080
+# Copia el resto del código
+COPY . .
 
-CMD  ["node", "index.js"]
+# Define variable de entorno para producción
+ENV NODE_ENV=production
+
+# Exponer el puerto que usa tu index.js (normalmente 3000)
+EXPOSE 3000
+
+# Corre migraciones y luego arranca tu servidor
+CMD ["sh", "-c", "npx sequelize-cli db:migrate --env production && node index.js"]
+
