@@ -1,5 +1,6 @@
-const cors = require('cors');
-const express = require('express');
+ const path = require('path');            // ← AÑADE ESTA LÍNEA
+ const cors = require('cors');
+ const express = require('express');
 const routes = require('../routes');
 
 
