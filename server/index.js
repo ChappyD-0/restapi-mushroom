@@ -2,7 +2,11 @@ const cors = require('cors');
 const express = require('express');
 const routes = require('../routes');
 
+
 const server = express();
+
+server.use(express.static(path.join(__dirname, '../public')));
+server.use('/api', cors(), express.json(), routes);
 const PORT = process.env.PORT || 3000; // Definir el puerto con variable de entorno o 3000 por defecto
 
 const corsOptions = {

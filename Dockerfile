@@ -1,22 +1,21 @@
 # Usa la imagen oficial de Node 20
 FROM node:20
 
-# Directorio de trabajo
 WORKDIR /app
 
-# Copia sólo los ficheros de dependencias e instala
+# Instala dependencias
 COPY package*.json ./
 RUN npm install
 
-# Copia el resto del código
+# Copia el resto del código (incluyendo public/ y server/)
 COPY . .
 
-# Define variable de entorno para producción
+# Modo producción
 ENV NODE_ENV=production
 
-# Exponer el puerto que usa tu index.js (normalmente 3000)
+# Escucha en el puerto que va a exponerse
 EXPOSE 3000
 
-# Corre migraciones y luego arranca tu servidor
+# Corre migraciones y luego levanta tu servidor
 CMD ["sh", "-c", "npx sequelize-cli db:migrate --env production && node index.js"]
 

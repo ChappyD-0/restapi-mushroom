@@ -1,6 +1,6 @@
 // frontend/callrestapi.js
 
-const API_URL = 'https://mysql-restapi-latest.onrender.com/api/users';
+const API_URL = '/api/users';
 
 // Muestra un alert Bootstrap con un mensaje
 function showMessage(message, type = 'success') {
