@@ -18,9 +18,7 @@ server.use(express.json());
 server.use('/api', routes);
 
 // Iniciar el servidor y escuchar en el puerto definido
-server.listen(PORT, () => {
-    console.log(`✅ Server is live at http://localhost:${PORT}`);
-});
+
 
 module.exports = server;
 
