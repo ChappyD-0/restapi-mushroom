@@ -30,8 +30,8 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      # - name: Run migrations
-      #   run: npx sequelize-cli db:migrate --env production
+      - name: Run migrations
+        run: npx sequelize-cli db:migrate --env production
 
       # - name: Run tests
       #   run: npm test
