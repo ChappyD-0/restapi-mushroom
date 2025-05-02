@@ -4,7 +4,6 @@ console.log('DB URL:', process.env.DEV_DATABASE_URL);
 
 module.exports = {
   development: {
-       // si existe DEV_DATABASE_URL, Sequelize la usará en vez de los campos separados
     url: process.env.DEV_DATABASE_URL,
     dialect: 'mysql'
    },

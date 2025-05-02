@@ -1,5 +1,5 @@
 // callrestapi.js - Versión Corregida
-const API_URL = 'http://localhost:3000/api/users';
+const API_URL = 'http://35.243.205.220/api/users';
 let usersData = [];
 
 // ====================== [FUNCIONES DE INTERFAZ] ======================
