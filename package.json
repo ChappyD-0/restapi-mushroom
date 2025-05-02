@@ -8,22 +8,22 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/leonardoalta/restapi.git"
+    "url": "git+https://github.com/ChappyD-0/restapi.git"
   },
-  "author": "leo",
+  "author": "chappyd-0",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/leonardoalta/restapi/issues"
+    "url": "https://github.com/ChappyD-0/restapi/issues"
   },
-  "homepage": "https://github.com/leonardoalta/restapi#readme",
+  "homepage": "https://github.com/ChappyD-0/restapi#readme",
   "dependencies": {
     "cors": "^2.8.5",
     "dotenv": "^8.6.0",
     "express": "^4.17.1",
     "mysql2": "^2.2.5",
-    "sequelize": "^6.37.6"
-  },
-  "devDependencies": {
+    "sequelize": "^6.37.6",
     "sequelize-cli": "^6.6.2"
-  }
+  },
+  "devDependencies": {},
+  "keywords": []
 }

@@ -23,6 +23,7 @@ module.exports = {
  require: true, 
   rejectUnauthorized: false }
     },
+    logging: console.log,
     define: {
       timestamps: true,
       underscored: false
