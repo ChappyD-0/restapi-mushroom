@@ -14,7 +14,9 @@ const createUser = async (req, res) => {
 const getAllUsers = async (req, res) => {
   console.log('getting users');
   try {
-    const users = await models.User.findAll();
+     const users = await models.User.findAll({
+      order: [['createdAt', 'DESC']] 
+    });
     return res.status(200).json({ users });
   } catch (error) {
     return res.status(500).json({ error: error.message });
@@ -22,26 +24,29 @@ const getAllUsers = async (req, res) => {
 };
 
 // Actualizar un usuario existente
+
 const updateUser = async (req, res) => {
   const { id } = req.params;
   try {
-    const [updatedCount, updatedRows] = await models.User.update(
-      req.body,
-      {
-        where: { id },
-        returning: true,
-        individualHooks: true
-      }
-    );
-    if (updatedCount === 0) {
+    // Actualizar y luego obtener el usuario actualizado
+    await models.User.update(req.body, { 
+      where: { id },
+      individualHooks: true
+    });
+
+    const updatedUser = await models.User.findByPk(id); // Obtener el usuario actualizado
+    
+    if (!updatedUser) {
       return res.status(404).json({ error: "Usuario no encontrado" });
     }
-    const updatedUser = updatedRows[0];
-    return res.status(200).json({ user: updatedUser });
+
+    return res.status(200).json({ user: updatedUser }); // Estructura consistente
+
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
 };
+
 
 // Eliminar un usuario
 const deleteUser = async (req, res) => {
@@ -63,4 +68,3 @@ module.exports = {
   updateUser,
   deleteUser
 };
-

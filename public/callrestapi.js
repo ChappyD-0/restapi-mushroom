@@ -1,148 +1,174 @@
-// public/callrestapi.js
-
-const API_URL = '/api/users';
+// callrestapi.js - Versión Corregida
+const API_URL = 'http://localhost:3000/api/users';
 let usersData = [];
 
-// Muestra un alert Bootstrap con un mensaje
-function showMessage(message, type = 'success') {
-  document.getElementById('resultMessage').innerHTML = `
-    <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+// ====================== [FUNCIONES DE INTERFAZ] ======================
+const showMessage = (message, type = 'success') => {
+  const messageContainer = document.getElementById('resultMessage');
+  messageContainer.innerHTML = `
+    <div class="alert ${type}">
       ${message}
-      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+      <button onclick="this.parentElement.remove()" class="close-btn">&times;</button>
     </div>
   `;
-}
+  setTimeout(() => messageContainer.innerHTML = '', 5000);
+};
 
-// Limpia el formulario y restablece modo "crear"
-function clearForm() {
+const clearForm = () => {
   document.getElementById('userForm').reset();
   document.getElementById('userId').value = '';
-  document.getElementById('saveBtn').textContent = 'Enviar';
+  document.getElementById('saveBtn').textContent = 'Guardar';
   document.getElementById('cancelEditBtn').style.display = 'none';
-}
+};
 
-// Rellena la tabla con la lista de usuarios y botones de acción
-function renderTable(users) {
+const renderTable = (users) => {
   const tbody = document.querySelector('#usersTable tbody');
-  tbody.innerHTML = '';
-  users.forEach(user => {
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
+  tbody.innerHTML = users.map(user => `
+    <tr>
       <td>${user.id}</td>
       <td>${user.name}</td>
       <td>${user.email}</td>
       <td>${user.age}</td>
-      <td>${user.comments}</td>
+      <td>${user.comments || '-'}</td>
       <td>${new Date(user.createdAt).toLocaleString()}</td>
       <td>
-        <button class="btn btn-sm btn-warning me-1" onclick="editUser(${user.id})">Editar</button>
-        <button class="btn btn-sm btn-danger" onclick="deleteUser(${user.id})">Borrar</button>
+        <button class="edit-btn" onclick="editUser(${user.id})">Editar</button>
+        <button class="delete-btn" onclick="deleteUser(${user.id})">Borrar</button>
       </td>
-    `;
-    tbody.appendChild(tr);
-  });
-}
+    </tr>
+  `).join('');
+};
 
-// GET /api/users
-async function getUsers() {
+// ====================== [FUNCIONES CRUD] ======================
+window.getUsers = async () => {
   try {
-    const res = await fetch(API_URL);
-    const { users } = await res.json();
+    const response = await fetch(API_URL);
+    if (!response.ok) throw new Error(`Error ${response.status}: ${response.statusText}`);
+    
+    const { users } = await response.json();
     usersData = users;
     renderTable(users);
-  } catch (err) {
-    console.error('Error fetching users:', err);
-    showMessage('Error al cargar usuarios', 'danger');
+  } catch (error) {
+    showMessage(`Error cargando usuarios: ${error.message}`, 'error');
   }
-}
+};
 
-// POST /api/users
-async function postUser() {
-  const name     = document.getElementById('name').value;
-  const email    = document.getElementById('email').value;
-  const age      = parseInt(document.getElementById('age').value, 10) || 0;
-  const comments = document.getElementById('comments').value;
+window.postUser = async () => {
+  const getValue = id => document.getElementById(id).value.trim();
+  
+  const userData = {
+    name: getValue('name'),
+    email: getValue('email'),
+    age: parseInt(getValue('age')) || 0,
+    comments: getValue('comments')
+  };
+
+  if (!userData.name || !userData.email) {
+    return showMessage('Nombre y email son requeridos', 'error');
+  }
+
   try {
-    const res = await fetch(API_URL, {
+    const response = await fetch(API_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, email, age, comments })
+      body: JSON.stringify(userData)
     });
-    if (!res.ok) throw new Error(res.statusText);
-    showMessage('Usuario creado con éxito');
-    clearForm();
-    getUsers();
-  } catch (err) {
-    console.error('Error creating user:', err);
-    showMessage('Error al crear usuario', 'danger');
-  }
-}
 
-// PUT /api/users/:id
-async function updateUser(id) {
-  const name     = document.getElementById('name').value;
-  const email    = document.getElementById('email').value;
-  const age      = parseInt(document.getElementById('age').value, 10) || 0;
-  const comments = document.getElementById('comments').value;
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || 'Error desconocido');
+
+    showMessage(`Usuario ${data.user.name} creado!`);
+    await getUsers();
+    clearForm();
+  } catch (error) {
+    showMessage(`Error creando usuario: ${error.message}`, 'error');
+  }
+};
+
+window.updateUser = async (id) => {
+  const userData = {
+    name: document.getElementById('name').value.trim(),
+    email: document.getElementById('email').value.trim(),
+    age: parseInt(document.getElementById('age').value) || 0,
+    comments: document.getElementById('comments').value.trim()
+  };
+
+  if (!userData.name || !userData.email) {
+    return showMessage('Nombre y email son requeridos', 'error');
+  }
+
   try {
-    const res = await fetch(`${API_URL}/${id}`, {
+    const response = await fetch(`${API_URL}/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, email, age, comments })
+      body: JSON.stringify(userData)
     });
-    if (!res.ok) throw new Error(res.statusText);
-    showMessage('Usuario actualizado con éxito');
+
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || 'Error desconocido');
+
+    showMessage(`Usuario ${data.user.name} actualizado!`);
+    await getUsers();
     clearForm();
-    getUsers();
-  } catch (err) {
-    console.error('Error updating user:', err);
-    showMessage('Error al actualizar usuario', 'danger');
+  } catch (error) {
+    showMessage(`Error actualizando: ${error.message}`, 'error');
+    console.error('Detalle error:', error);
   }
-}
+};
 
-// DELETE /api/users/:id
-async function deleteUser(id) {
-  if (!confirm('¿Eliminar usuario?')) return;
+window.deleteUser = async (id) => {
+  if (!confirm(`¿Eliminar usuario ${id}? Esta acción es irreversible`)) return;
+
   try {
-    const res = await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
-    if (res.status !== 204) throw new Error(res.statusText);
-    showMessage('Usuario eliminado', 'warning');
-    getUsers();
-  } catch (err) {
-    console.error('Error deleting user:', err);
-    showMessage('Error al borrar usuario', 'danger');
-  }
-}
+    const response = await fetch(`${API_URL}/${id}`, { 
+      method: 'DELETE' 
+    });
 
-// Carga datos en formulario para editar
-function editUser(id) {
+    if (response.status === 204) {
+      showMessage('Usuario eliminado', 'warning');
+      await getUsers();
+      return;
+    }
+
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || 'Error eliminando');
+
+    showMessage(data.message || 'Usuario eliminado');
+    await getUsers();
+  } catch (error) {
+    showMessage(`Error eliminando: ${error.message}`, 'error');
+  }
+};
+
+// ====================== [FUNCIONES ADICIONALES] ======================
+window.editUser = (id) => {
   const user = usersData.find(u => u.id === id);
-  if (!user) return;
-  document.getElementById('userId').value     = user.id;
-  document.getElementById('name').value       = user.name;
-  document.getElementById('email').value      = user.email;
-  document.getElementById('age').value        = user.age;
-  document.getElementById('comments').value   = user.comments;
-  document.getElementById('saveBtn').textContent      = 'Actualizar';
+  if (!user) return showMessage('Usuario no encontrado', 'error');
+
+  document.getElementById('userId').value = user.id;
+  document.getElementById('name').value = user.name;
+  document.getElementById('email').value = user.email;
+  document.getElementById('age').value = user.age;
+  document.getElementById('comments').value = user.comments || '';
+
+  document.getElementById('saveBtn').textContent = 'Actualizar';
   document.getElementById('cancelEditBtn').style.display = 'inline-block';
-}
+};
 
-// Maneja el submit del formulario según modo (crear o editar)
-async function saveUser(event) {
-  event.preventDefault();
-  const id = document.getElementById('userId').value;
-  if (id) {
-    await updateUser(id);
-  } else {
-    await postUser();
+window.saveUser = async (e) => {
+  e.preventDefault();
+  try {
+    const id = document.getElementById('userId').value;
+    id ? await window.updateUser(id) : await window.postUser();
+  } catch (error) {
+    showMessage(`Error procesando formulario: ${error.message}`, 'error');
   }
-}
+};
 
-// Asigna eventos al cargar la página
+// ====================== [INICIALIZACIÓN] ======================
 window.addEventListener('DOMContentLoaded', () => {
-  document.getElementById('userForm').addEventListener('submit', saveUser);
-  document.getElementById('loadUsersBtn').addEventListener('click', getUsers);
+  document.getElementById('userForm').addEventListener('submit', window.saveUser);
+  document.getElementById('loadUsersBtn').addEventListener('click', window.getUsers);
   document.getElementById('cancelEditBtn').addEventListener('click', clearForm);
-  getUsers();
+  window.getUsers();
 });
-
