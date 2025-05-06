@@ -1,6 +1,6 @@
 
 // callrestapi.js – Adaptado a “Hongos”
-const API_URL = 'http://35.243.205.220/api/mushrooms';
+const API_URL = 'http://35.243.205.220/api/users';
 let mushroomsData = [];
 
 // ====================== [FUNCIONES DE INTERFAZ] ======================
