@@ -1,14 +1,15 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Usuarios - REST API</title>
+  <title>Hongos – REST API</title>
   <style>
     body { font-family: Arial, sans-serif; margin: 0; padding: 20px; }
     .card { background: #fff; border: 1px solid #ddd; border-radius: 4px; padding: 20px; margin-bottom: 20px; }
     .form-group { margin-bottom: 15px; }
-    input, button { padding: 8px; margin: 5px 0; width: 100%; box-sizing: border-box; }
+    input, textarea, button { padding: 8px; margin: 5px 0; width: 100%; box-sizing: border-box; }
     button { background: #007bff; color: white; border: none; cursor: pointer; }
     button:hover { opacity: 0.9; }
     table { width: 100%; border-collapse: collapse; margin-top: 20px; }
@@ -22,26 +23,24 @@
 </head>
 <body>
   <div class="container">
-    <!-- Formulario -->
     <div class="card">
-      <h3>Crear/Editar Usuario</h3>
-      <form id="userForm">
-        <input type="hidden" id="userId">
+      <h3>Crear / Editar Hongo</h3>
+      <form id="mushroomForm">
+        <input type="hidden" id="mushroomId">
         <div class="form-group">
           <label for="name">Nombre:</label>
-          <input type="text" id="name" required>
+          <input type="text" id="name" name="name" required>
         </div>
         <div class="form-group">
-          <label for="email">Email:</label>
-          <input type="email" id="email" required>
+          <label for="species">Especie:</label>
+          <input type="text" id="species" name="species" required>
         </div>
         <div class="form-group">
-          <label for="age">Edad:</label>
-          <input type="number" id="age" required>
+          <label><input type="checkbox" id="edible" name="edible"> Comestible</label>
         </div>
         <div class="form-group">
-          <label for="comments">Comentarios:</label>
-          <input type="text" id="comments">
+          <label for="description">Descripción:</label>
+          <textarea id="description" name="description"></textarea>
         </div>
         <div class="form-group">
           <button type="submit" id="saveBtn">Guardar</button>
@@ -51,18 +50,17 @@
       <div id="resultMessage"></div>
     </div>
 
-    <!-- Listado de usuarios -->
     <div class="card">
-      <h3>Usuarios</h3>
-      <button id="loadUsersBtn">Cargar Usuarios</button>
-      <table id="usersTable">
+      <h3>Listado de Hongos</h3>
+      <button id="loadBtn">Cargar Hongos</button>
+      <table id="mushroomsTable">
         <thead>
           <tr>
             <th>ID</th>
             <th>Nombre</th>
-            <th>Email</th>
-            <th>Edad</th>
-            <th>Comentarios</th>
+            <th>Especie</th>
+            <th>Comestible</th>
+            <th>Descripción</th>
             <th>Creado</th>
             <th>Acciones</th>
           </tr>

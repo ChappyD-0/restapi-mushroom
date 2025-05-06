@@ -1,33 +1,34 @@
+
 const express = require('express');
 const router = express.Router();
 const {
-  createUser,
-  getAllUsers,
-  updateUser,
-  deleteUser
+  createMushroom,
+  getAllMushrooms,
+  updateMushroom,
+  deleteMushroom
 } = require('../controllers/index.js');
 
 // ======================
-// RUTAS DE USUARIOS
+// RUTAS DE HONGOS
 // ======================
 
-// GET /api/users - Obtener todos los usuarios
-router.get('/users', getAllUsers);
+// GET  /api/mushrooms        - Obtener todos los hongos
+router.get('/mushrooms', getAllMushrooms);
 
-// POST /api/users - Crear nuevo usuario
-router.post('/users', createUser);
+// POST /api/mushrooms        - Crear un nuevo hongo
+router.post('/mushrooms', createMushroom);
 
-// PUT /api/users/:id - Actualizar usuario existente
-router.put('/users/:id', updateUser);
+// PUT  /api/mushrooms/:id    - Actualizar un hongo existente
+router.put('/mushrooms/:id', updateMushroom);
 
-// DELETE /api/users/:id - Eliminar usuario
-router.delete('/users/:id', deleteUser);
+// DELETE /api/mushrooms/:id  - Eliminar un hongo
+router.delete('/mushrooms/:id', deleteMushroom);
 
 // ======================
 // RUTAS ADICIONALES
 // ======================
 
-// Ruta para evitar error de favicon
+// Para evitar error de favicon
 router.get('/favicon.ico', (req, res) => res.status(204));
 
 // Manejo de rutas no encontradas
@@ -35,4 +36,4 @@ router.use((req, res) => {
   res.status(404).json({ error: 'Ruta no encontrada' });
 });
 
-module.exports = router; // Exportación esencial
+module.exports = router;
